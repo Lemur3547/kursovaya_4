@@ -25,8 +25,10 @@ def presentation(vacancy):
     print(f'Требуемый опыт: {vacancy.experience["name"]}')
     print(f'Занятость: {vacancy.schedule['name']}\n')
 
-    print(vacancy.description['requirement'])
-    print(vacancy.description['responsibility'])
+    if vacancy.description['requirement'] is not None:
+        print(vacancy.description['requirement'])
+    if vacancy.description['responsibility'] is not None:
+        print(vacancy.description['responsibility'])
 
     print()
 
