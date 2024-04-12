@@ -1,18 +1,38 @@
-import json
+from src.classes import HeadHunterAPI, VacanciesFile
+from src.presentation import presentation
+from src.sort import convert_vacations_to_class, vacancies_sort
 
-from src.classes import HeadHunterAPI, Vacancy
 
-vacancies = HeadHunterAPI()
-vacancies.get_vacancies('Python')
+def interface():
+    search = input("Введите запрос ")
+    hh_api = HeadHunterAPI()
+    hh_api.get_vacancies(search)
 
-with open('data/vacancies.json', 'rt', encoding='utf-8') as file:
-    vacancies = json.loads(file.read())
+    while True:
+        try:
+            number_vacancies = int(input("Какое количество вакансий вывести "))
+        except ValueError:
+            print("Введите число вакансий")
+        else:
+            break
 
-vac = vacancies['items'][0]
-new_vac1 = Vacancy(vac['name'], vac['area']['name'], None, vac['address'], vac['employer'], vac['snippet'],
-                   vac['contacts'], vac['schedule']['name'], vac['professional_roles'], vac['experience']['name'],
-                   vac['alternate_url'])
+    tags = input("Введите ключевые слова для поиска ")
+    vacancies_file = VacanciesFile()
+    vacancies_list = vacancies_file.get_vacancy(tags)
 
-new_vac2 = Vacancy(vac['name'], vac['area']['name'], 120000, vac['address'], vac['employer'], vac['snippet'],
-                   vac['contacts'], vac['schedule']['name'], vac['professional_roles'], vac['experience']['name'],
-                   vac['alternate_url'])
+    if not vacancies_list:
+        print("Ничего не найдено")
+        return
+
+    vacancies_dict = convert_vacations_to_class(vacancies_list)
+    sorted_vacancies = vacancies_sort(vacancies_dict)
+    count = 0
+    for vacancy in sorted_vacancies:
+        if count < number_vacancies:
+            presentation(vacancy)
+            count += 1
+        else:
+            break
+
+
+interface()
